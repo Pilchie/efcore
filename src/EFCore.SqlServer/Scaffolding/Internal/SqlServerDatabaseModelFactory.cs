@@ -606,7 +606,7 @@ ORDER BY [table_schema], [table_name], [c].[column_id]";
             var tableColumnGroups = reader.Cast<DbDataRecord>()
                 .GroupBy(
                     ddr => (tableSchema: ddr.GetValueOrDefault<string>("table_schema"),
-                        tableName: ddr.GetValueOrDefault<string>("table_name")));
+                        tableName: ddr.GetFieldValue<string>("table_name")));
 
             foreach (var tableColumnGroup in tableColumnGroups)
             {
@@ -830,7 +830,7 @@ ORDER BY [table_schema], [table_name], [index_name], [ic].[key_ordinal]";
             var tableIndexGroups = reader.Cast<DbDataRecord>()
                 .GroupBy(
                     ddr => (tableSchema: ddr.GetValueOrDefault<string>("table_schema"),
-                        tableName: ddr.GetValueOrDefault<string>("table_name")));
+                        tableName: ddr.GetFieldValue<string>("table_name")));
 
             foreach (var tableIndexGroup in tableIndexGroups)
             {
@@ -878,7 +878,7 @@ ORDER BY [table_schema], [table_name], [index_name], [ic].[key_ordinal]";
                     .Where(ddr => ddr.GetValueOrDefault<bool>("is_unique_constraint"))
                     .GroupBy(
                         ddr =>
-                            (Name: ddr.GetValueOrDefault<string>("index_name"),
+                            (Name: ddr.GetFieldValue<string>("index_name"),
                                 TypeDesc: ddr.GetValueOrDefault<string>("type_desc")))
                     .ToArray();
 
@@ -913,7 +913,7 @@ ORDER BY [table_schema], [table_name], [index_name], [ic].[key_ordinal]";
                             && !ddr.GetValueOrDefault<bool>("is_unique_constraint"))
                     .GroupBy(
                         ddr =>
-                            (Name: ddr.GetValueOrDefault<string>("index_name"),
+                            (Name: ddr.GetFieldValue<string>("index_name"),
                                 TypeDesc: ddr.GetValueOrDefault<string>("type_desc"),
                                 IsUnique: ddr.GetValueOrDefault<bool>("is_unique"),
                                 HasFilter: ddr.GetValueOrDefault<bool>("has_filter"),
@@ -976,7 +976,7 @@ ORDER BY [table_schema], [table_name], [f].[name], [fc].[constraint_column_id]";
             var tableForeignKeyGroups = reader.Cast<DbDataRecord>()
                 .GroupBy(
                     ddr => (tableSchema: ddr.GetValueOrDefault<string>("table_schema"),
-                        tableName: ddr.GetValueOrDefault<string>("table_name")));
+                        tableName: ddr.GetFieldValue<string>("table_name")));
 
             foreach (var tableForeignKeyGroup in tableForeignKeyGroups)
             {
@@ -987,10 +987,10 @@ ORDER BY [table_schema], [table_name], [f].[name], [fc].[constraint_column_id]";
 
                 var foreignKeyGroups = tableForeignKeyGroup
                     .GroupBy(
-                        c => (Name: c.GetValueOrDefault<string>("name"),
+                        c => (Name: c.GetFieldValue<string>("name"),
                             PrincipalTableSchema: c.GetValueOrDefault<string>("principal_table_schema"),
-                            PrincipalTableName: c.GetValueOrDefault<string>("principal_table_name"),
-                            OnDeleteAction: c.GetValueOrDefault<string>("delete_referential_action_desc")));
+                            PrincipalTableName: c.GetFieldValue<string>("principal_table_name"),
+                            OnDeleteAction: c.GetFieldValue<string>("delete_referential_action_desc")));
 
                 foreach (var foreignKeyGroup in foreignKeyGroups)
                 {
@@ -1108,10 +1108,10 @@ WHERE name = '{connection.Database}';";
             return result != null ? Convert.ToByte(result) : (byte)0;
         }
 
-        private static string DisplayName(string? schema, string? name)
+        private static string DisplayName(string? schema, string name)
             => (!string.IsNullOrEmpty(schema) ? schema + "." : "") + name;
 
-        private static ReferentialAction? ConvertToReferentialAction(string? onDeleteAction)
+        private static ReferentialAction? ConvertToReferentialAction(string onDeleteAction)
         {
             switch (onDeleteAction)
             {

@@ -14,7 +14,7 @@ namespace Microsoft.EntityFrameworkCore.Scaffolding.Metadata
     /// </summary>
     public class DatabaseUniqueConstraint : Annotatable
     {
-        public DatabaseUniqueConstraint([NotNull] DatabaseTable table, [CanBeNull] string? name)
+        public DatabaseUniqueConstraint([NotNull] DatabaseTable table, [NotNull] string name)
         {
             Table = table;
             Name = name;
@@ -29,7 +29,7 @@ namespace Microsoft.EntityFrameworkCore.Scaffolding.Metadata
         /// <summary>
         ///     The name of the constraint.
         /// </summary>
-        public virtual string? Name { get; [param: CanBeNull] set; }
+        public virtual string Name { get; [param: NotNull] set; }
 
         /// <summary>
         ///     The ordered list of columns that make up the constraint.
